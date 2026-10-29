@@ -1,0 +1,280 @@
+/* Shared visual primitives for P01. Legacy class names are styled in place so
+   existing event handlers, data flow, keyboard behavior and IPC remain intact. */
+
+:where(button, input, select, textarea) {
+  font-family: var(--mrp-font-sans);
+}
+
+:where(button, input, select, textarea, [tabindex]):focus-visible {
+  outline: none;
+  box-shadow: var(--mrp-focus-ring);
+}
+
+:where(button, input, select, textarea) {
+  accent-color: var(--mrp-color-cyan);
+}
+
+::selection {
+  color: var(--mrp-color-text);
+  background: rgba(18, 217, 239, 0.28);
+}
+
+/* Existing button system */
+.mrp-btn {
+  min-height: var(--mrp-control-height);
+  padding: 7px 12px;
+  border: 1px solid var(--mrp-color-border-strong);
+  border-radius: var(--mrp-radius-md);
+  background: rgba(16, 32, 53, 0.88);
+  color: var(--mrp-color-text);
+  font-size: var(--mrp-font-size-sm);
+  font-weight: 700;
+  line-height: 1.25;
+  cursor: pointer;
+  transition: background var(--mrp-motion-fast), border-color var(--mrp-motion-fast), color var(--mrp-motion-fast), transform var(--mrp-motion-fast), box-shadow var(--mrp-motion-fast);
+}
+.mrp-btn:hover:not(:disabled) {
+  border-color: rgba(18, 217, 239, 0.62);
+  background: rgba(18, 217, 239, 0.10);
+  color: #ffffff;
+}
+.mrp-btn:active:not(:disabled) { transform: translateY(1px); }
+.mrp-btn:focus-visible { box-shadow: var(--mrp-focus-ring); }
+.mrp-btn:disabled { cursor: not-allowed; opacity: 0.42; filter: saturate(0.65); }
+.mrp-btn--primary {
+  border-color: rgba(241, 76, 227, 0.76);
+  background: linear-gradient(135deg, #cb2abe, #e63ad4);
+  color: #ffffff;
+  box-shadow: 0 5px 18px rgba(223, 53, 210, 0.15);
+}
+.mrp-btn--primary:hover:not(:disabled) {
+  border-color: #ff8af3;
+  background: linear-gradient(135deg, #dd35d0, #f14ce3);
+  box-shadow: 0 7px 22px rgba(223, 53, 210, 0.22);
+}
+.mrp-btn--danger {
+  border-color: rgba(251, 100, 122, 0.38);
+  background: rgba(251, 100, 122, 0.07);
+  color: #ffc5ce;
+}
+.mrp-btn--danger:hover:not(:disabled) {
+  border-color: rgba(251, 100, 122, 0.76);
+  background: rgba(251, 100, 122, 0.15);
+  color: #fff;
+}
+
+/* Consistent status chips and titles */
+.mrp-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-color: rgba(18, 217, 239, 0.32);
+  border-radius: var(--mrp-radius-pill);
+  padding: 4px 9px;
+  background: rgba(18, 217, 239, 0.07);
+  color: var(--mrp-color-cyan);
+  font-size: var(--mrp-font-size-xs);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+}
+.mrp-kicker,
+.mrp-panel-title__eyebrow {
+  color: var(--mrp-color-text-muted);
+  font-size: var(--mrp-font-size-xs);
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+.mrp-panel-title__eyebrow { color: var(--mrp-color-cyan); }
+
+/* Existing content surfaces share one border and depth system. */
+.mrp-section-card,
+.mrp-effect-card,
+.mrp-media-summary,
+.mrp-inline-note {
+  border-color: var(--mrp-color-border);
+  background: rgba(12, 26, 43, 0.72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.018);
+}
+.mrp-section-card { border-radius: var(--mrp-radius-lg); }
+.mrp-effect-card { border-radius: var(--mrp-radius-md); }
+.mrp-media-summary { border-radius: var(--mrp-radius-md); }
+.mrp-inline-note {
+  border-radius: var(--mrp-radius-md);
+  color: var(--mrp-color-text-secondary);
+}
+.mrp-recent-list button {
+  border-color: var(--mrp-color-border);
+  border-radius: var(--mrp-radius-md);
+  background: rgba(16, 32, 53, 0.62);
+  color: var(--mrp-color-text);
+  transition: border-color var(--mrp-motion-fast), background var(--mrp-motion-fast);
+}
+.mrp-recent-list button:hover {
+  border-color: rgba(18, 217, 239, 0.42);
+  background: rgba(18, 217, 239, 0.06);
+}
+
+/* Shared form controls. Range/color/file/checkbox/radio retain native behavior. */
+:where(
+  input[type="text"], input[type="number"], input[type="password"],
+  input[type="email"], input[type="url"], input[type="search"],
+  input:not([type]), select, textarea
+) {
+  min-width: 0;
+  border: 1px solid var(--mrp-control-border);
+  border-radius: var(--mrp-radius-sm);
+  background-color: var(--mrp-control-bg) !important;
+  color: var(--mrp-control-text) !important;
+  font-size: var(--mrp-font-size-sm);
+  line-height: 1.4;
+  transition: border-color var(--mrp-motion-fast), background-color var(--mrp-motion-fast), box-shadow var(--mrp-motion-fast);
+}
+:where(
+  input[type="text"], input[type="number"], input[type="password"],
+  input[type="email"], input[type="url"], input[type="search"],
+  input:not([type]), select
+) {
+  min-height: var(--mrp-control-height);
+  padding: 7px 10px;
+}
+textarea {
+  padding: 9px 10px;
+  resize: vertical;
+}
+:where(
+  input[type="text"], input[type="number"], input[type="password"],
+  input[type="email"], input[type="url"], input[type="search"],
+  input:not([type]), select, textarea
+):hover:not(:disabled):not(:focus) {
+  border-color: rgba(142, 171, 205, 0.42);
+  background-color: var(--mrp-control-bg-hover) !important;
+}
+:where(
+  input[type="text"], input[type="number"], input[type="password"],
+  input[type="email"], input[type="url"], input[type="search"],
+  input:not([type]), select, textarea
+):focus {
+  border-color: var(--mrp-control-border-focus);
+  outline: none;
+}
+:where(input, textarea)::placeholder { color: var(--mrp-control-placeholder); opacity: 1; }
+:where(input[type="checkbox"], input[type="radio"]) { accent-color: var(--mrp-color-cyan); }
+select { background-color: var(--mrp-control-bg) !important; color: var(--mrp-control-text) !important; border-color: var(--mrp-control-border); }
+select option { background: var(--mrp-color-surface-raised); color: var(--mrp-color-text); }
+input[type="range"] { accent-color: var(--mrp-color-cyan); }
+
+/* Dialogs and toasts use the same surface, border and shadow tokens. */
+.mrp-dialog {
+  border-color: rgba(112, 184, 255, 0.28);
+  border-radius: var(--mrp-radius-xl);
+  background: linear-gradient(180deg, #0e1d30, #091525);
+  box-shadow: var(--mrp-shadow-overlay);
+}
+.mrp-dialog__title { color: var(--mrp-color-text); }
+.mrp-dialog p { color: var(--mrp-color-text-secondary); font-size: var(--mrp-font-size-sm); line-height: 1.55; }
+.mrp-dialog input {
+  min-height: 38px;
+  border-color: var(--mrp-control-border);
+  border-radius: var(--mrp-radius-md);
+  background: var(--mrp-control-bg) !important;
+}
+.mrp-toast {
+  border-color: rgba(18, 217, 239, 0.30);
+  border-radius: var(--mrp-radius-lg);
+  background: rgba(9, 22, 38, 0.97);
+  box-shadow: var(--mrp-shadow-overlay);
+}
+.mrp-toast__body { color: var(--mrp-color-text); font-size: var(--mrp-font-size-sm); }
+.mrp-toast__close { border-radius: var(--mrp-radius-sm); }
+.mrp-toast__close:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
+
+/* Small utilities available to later phases; not wired to business logic in P01. */
+.mrp-ui-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--mrp-control-height);
+  padding: 7px 12px;
+  border: 1px solid var(--mrp-color-border-strong);
+  border-radius: var(--mrp-radius-md);
+  background: rgba(16, 32, 53, 0.9);
+  color: var(--mrp-color-text);
+  font-size: var(--mrp-font-size-sm);
+  font-weight: 700;
+  line-height: 1.25;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--mrp-motion-fast), border-color var(--mrp-motion-fast), transform var(--mrp-motion-fast), box-shadow var(--mrp-motion-fast);
+}
+.mrp-ui-button:hover:not(:disabled) { border-color: rgba(18,217,239,.62); background: rgba(18,217,239,.10); }
+.mrp-ui-button:active:not(:disabled) { transform: translateY(1px); }
+.mrp-ui-button:disabled { opacity: .42; cursor: not-allowed; }
+.mrp-ui-button--primary { border-color: var(--mrp-color-magenta); background: var(--mrp-color-magenta); color: #fff; }
+.mrp-ui-button--primary:hover:not(:disabled) { background: var(--mrp-color-magenta-hover); }
+.mrp-ui-button--danger { border-color: rgba(251,100,122,.5); background: rgba(251,100,122,.09); color: #ffc5ce; }
+.mrp-ui-button--ghost { border-color: transparent; background: transparent; color: var(--mrp-color-text-secondary); }
+.mrp-ui-button--sm { min-height: 28px; padding: 5px 9px; font-size: var(--mrp-font-size-xs); }
+.mrp-ui-button--lg { min-height: 40px; padding: 9px 16px; font-size: var(--mrp-font-size-md); }
+.mrp-ui-button--full { width: 100%; }
+.mrp-ui-button__icon { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+.mrp-ui-icon-button { width: 34px; min-width: 34px; padding: 0; }
+
+.mrp-ui-card {
+  min-width: 0;
+  border: 1px solid var(--mrp-color-border);
+  border-radius: var(--mrp-radius-lg);
+  background: var(--mrp-color-surface);
+  color: var(--mrp-color-text);
+}
+.mrp-ui-card--raised { background: var(--mrp-color-surface-raised); box-shadow: var(--mrp-shadow-card); }
+.mrp-ui-card--inset { background: rgba(5, 14, 25, 0.7); }
+.mrp-ui-card--padded { padding: var(--mrp-space-4); }
+.mrp-ui-card--compact { padding: var(--mrp-space-3); }
+
+.mrp-ui-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 4px 8px;
+  border: 1px solid var(--mrp-color-border);
+  border-radius: var(--mrp-radius-pill);
+  background: rgba(142,171,205,.08);
+  color: var(--mrp-color-text-secondary);
+  font-size: var(--mrp-font-size-xs);
+  font-weight: 700;
+  line-height: 1.2;
+}
+.mrp-ui-badge--info { border-color: rgba(112,184,255,.3); background: rgba(112,184,255,.08); color: var(--mrp-color-info); }
+.mrp-ui-badge--success { border-color: rgba(54,211,153,.3); background: rgba(54,211,153,.08); color: var(--mrp-color-success); }
+.mrp-ui-badge--warning { border-color: rgba(246,194,96,.3); background: rgba(246,194,96,.08); color: var(--mrp-color-warning); }
+.mrp-ui-badge--danger { border-color: rgba(251,100,122,.3); background: rgba(251,100,122,.08); color: var(--mrp-color-danger); }
+
+.mrp-ui-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; color: var(--mrp-color-text-secondary); font-size: var(--mrp-font-size-sm); line-height: 1.4; }
+.mrp-ui-field__label { display: inline-flex; align-items: center; gap: 5px; color: var(--mrp-color-text); font-weight: 650; }
+.mrp-ui-field__required { color: var(--mrp-color-magenta); }
+.mrp-ui-field__hint { color: var(--mrp-color-text-muted); font-size: var(--mrp-font-size-xs); }
+.mrp-ui-field__error { color: var(--mrp-color-danger); font-size: var(--mrp-font-size-xs); }
+.mrp-ui-field--invalid :where(input,select,textarea) { border-color: var(--mrp-color-danger); }
+
+.mrp-ui-section-header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--mrp-space-3); min-width: 0; }
+.mrp-ui-section-header__copy { min-width: 0; }
+.mrp-ui-section-header__eyebrow { display: block; margin-bottom: 5px; color: var(--mrp-color-cyan); font-size: var(--mrp-font-size-xs); font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.mrp-ui-section-header__title { margin: 0; color: var(--mrp-color-text); font-size: var(--mrp-font-size-xl); font-weight: 800; line-height: 1.25; }
+.mrp-ui-section-header__description { margin: 6px 0 0; color: var(--mrp-color-text-secondary); font-size: var(--mrp-font-size-sm); line-height: 1.55; }
+.mrp-ui-section-header__actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: var(--mrp-space-2); }
+
+/* Better keyboard support and less motion for users who request it. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

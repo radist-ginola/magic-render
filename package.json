@@ -1,0 +1,139 @@
+{
+  "name": "magic-render-pro",
+  "version": "0.3.27",
+  "description": "Magic Render Pro — Windows desktop video rendering workstation.",
+  "private": true,
+  "main": "dist/main/index.js",
+  "author": "Radist Ginola",
+  "license": "UNLICENSED",
+  "type": "commonjs",
+  "scripts": {
+    "build": "npm run build:main && npm run build:renderer",
+    "build:main": "tsc -p tsconfig.main.json && tsc -p tsconfig.preload.json",
+    "build:renderer": "npm run typecheck:renderer && vite build --config vite.renderer.config.ts",
+    "dev": "npm run build:main && concurrently -k \"vite --config vite.renderer.config.ts\" \"wait-on http://127.0.0.1:5173 && cross-env MAGIC_RENDER_ENV=development MAGIC_RENDER_DEV_SERVER_URL=http://127.0.0.1:5173 node scripts/launch-electron.cjs\"",
+    "dist": "node scripts/preflight-dist.cjs && npm run build && electron-builder --win",
+    "start": "cross-env MAGIC_RENDER_ENV=production node scripts/launch-electron.cjs",
+    "test": "node scripts/run-current-tests.cjs",
+    "typecheck": "tsc -p tsconfig.main.json --noEmit && tsc -p tsconfig.preload.json --noEmit && tsc -p tsconfig.renderer.json --noEmit",
+    "typecheck:renderer": "tsc -p tsconfig.renderer.json --noEmit",
+    "verify:blank-screen-fix": "node scripts/verify-blank-screen-fix.mjs",
+    "verify:foundation": "node scripts/verify-foundation.mjs",
+    "verify:repository-cleanup": "node scripts/verify-repository-cleanup.cjs",
+    "verify:ui-layout:p24": "node scripts/verify-ui-layout-p24.mjs",
+    "verify:ui-layout:p26": "node scripts/verify-ui-layout-p26.mjs",
+    "verify:uiux": "node scripts/verify-uiux-redesign.mjs",
+    "verify:updates:p33": "node scripts/verify-updates-p33.cjs",
+    "verify:updates:p35": "node scripts/verify-updates-p35.cjs",
+    "test:monitor-pause-cache": "node scripts/test-monitor-pause-cache.cjs",
+    "test:orchestrator": "node scripts/test-render-orchestrator.cjs",
+    "test:output-compatibility": "node scripts/test-output-compatibility.cjs",
+    "test:p23-random-audio-seo": "node scripts/test-p23-random-audio-seo.cjs",
+    "test:p24-undo-visualizer-seo": "node scripts/test-p24-undo-visualizer-seo.cjs",
+    "test:p26-visualizer-seo-layout": "node scripts/test-p26-visualizer-seo-layout.cjs",
+    "test:p27-build-render-hardening": "node scripts/test-p27-build-render-hardening.cjs",
+    "test:p28-persistence-render-fixes": "node scripts/test-p28-persistence-render-fixes.cjs",
+    "test:p30-workflow-fixes": "node scripts/test-p30-workflow-fixes.cjs",
+    "test:p31-connected-workflow-fixes": "node scripts/test-p31-connected-workflow-fixes.cjs",
+    "test:p32-ui-fixes": "node scripts/test-p32-ui-fixes.cjs",
+    "test:p33-bulk-sidecars": "node scripts/test-p33-bulk-sidecars.cjs",
+    "test:p33-stereo-bulk-log": "node scripts/test-p33-stereo-bulk-log-fixes.cjs",
+    "test:p34-visualizer-canvas-reference": "node scripts/test-p34-visualizer-canvas-reference.cjs",
+    "test:p35-hf10-seo-top-spacing": "node scripts/test-p35-hf10-seo-top-spacing.cjs",
+    "test:p35-hf11-preload-bridge": "node scripts/test-p35-hf11-preload-bridge.cjs",
+    "test:p35-hf12-runtime-fixes": "node scripts/test-p35-hf12-runtime-fixes.cjs",
+    "test:p35-hf13-header-normalization": "node scripts/test-p35-hf13-header-normalization.cjs",
+    "test:p35-hf3-visualizer-parity": "node scripts/test-p35-hf3-visualizer-parity.cjs",
+    "test:p35-hf4-panel-layout": "node scripts/test-p35-hf4-panel-layout.cjs",
+    "test:p35-hf5-media-header": "node scripts/test-p35-hf5-media-header.cjs",
+    "test:p35-hf6-overlay-spacing": "node scripts/test-p35-hf6-overlay-spacing.cjs",
+    "test:p35-hf7-canvas-preview-spacing": "node scripts/test-p35-hf7-canvas-preview-spacing.cjs",
+    "test:p35-hf8-preview-layout": "node scripts/test-p35-hf8-preview-layout.cjs",
+    "test:p35-hf9-seo-spacing": "node scripts/test-p35-hf9-seo-spacing.cjs",
+    "test:p35-onix-visualizers": "node scripts/test-p35-onix-visualizers.cjs",
+    "test:p36-visualizer-project-validation": "node scripts/test-p36-visualizer-project-validation.cjs",
+    "test:phase22": "npm run test:phase22:unit && npm run test:phase22:integration && npm run test:phase22:ipc && npm run test:phase22:e2e",
+    "test:phase22:e2e": "node scripts/test-phase22-e2e.cjs",
+    "test:phase22:integration": "node scripts/test-phase22-integration.cjs",
+    "test:phase22:ipc": "node scripts/test-phase22-ipc.cjs",
+    "test:phase22:unit": "node scripts/test-phase22-unit.cjs",
+    "test:playlist": "tsc -p tsconfig.test-playlist.json && node scripts/test-playlist-algorithms.cjs",
+    "test:render-engine": "node scripts/test-render-engine.cjs",
+    "test:runner-env": "node scripts/test-runner-env.test.cjs",
+    "test:v5n-bulk": "node scripts/test-v5n-bulk.cjs",
+    "test:v5x-upgrades": "node scripts/test-v5x-upgrades.cjs",
+    "test:v5y-sync": "node scripts/test-v5y-sync.cjs",
+    "test:v5z-assets-render": "node scripts/test-v5z-render-and-assets.cjs",
+    "test:v6e-seo": "node scripts/test-v6e-seo-framework.cjs",
+    "test:v6f": "node scripts/test-v6f-seo-project-assets.cjs",
+    "test:v6g-seo": "node scripts/test-v6g-seo-title-repair.cjs",
+    "test:v6i-smooth-loop": "node scripts/test-v6i-smooth-loop.cjs"
+  },
+  "dependencies": {
+    "@ffmpeg/ffmpeg": "^0.12.15",
+    "dotenv": "^16.6.1",
+    "electron-store": "^8.2.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@derhuerst/ffprobe-static": "5.3.0",
+    "@types/node": "^22.15.21",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.7.0",
+    "autoprefixer": "^10.4.21",
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "electron": "^37.2.6",
+    "electron-builder": "^26.0.12",
+    "ffmpeg-static": "5.3.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "wait-on": "^8.0.3"
+  },
+  "build": {
+    "appId": "com.magicrenderpro.app",
+    "productName": "Magic Render Pro",
+    "asar": true,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json",
+      "resources/app-icon.ico"
+    ],
+    "extraResources": [
+      {
+        "from": "resources/ffmpeg",
+        "to": "ffmpeg"
+      },
+      {
+        "from": "resources/seo/promptimageSEO.md",
+        "to": "seo/promptimageSEO.md"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "Magic-Render-Pro-${version}-Setup.${ext}",
+      "icon": "resources/app-icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  }
+}

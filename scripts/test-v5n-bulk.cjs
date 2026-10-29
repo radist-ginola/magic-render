@@ -1,0 +1,80 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const os=require('node:os');
+const path=require('node:path');
+const child=require('node:child_process');
+const Module=require('node:module');
+const ts=require('typescript');
+Module._extensions['.ts']=(mod,file)=>mod._compile(ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.CommonJS,esModuleInterop:true}}).outputText,file);
+const originalLoad=Module._load;
+const dir=fs.mkdtempSync(path.join(os.tmpdir(),'mrp-v5n-'));
+const out=path.join(dir,'out');fs.mkdirSync(out);
+const settings={outputDir:out,resolution:'720p',fps:24,bitrateKbps:1300,bitrateMode:'vbr',cpuLoadPercent:75,renderPreset:'fast',aiProvider:'gemini',aiModel:'gemini-2.5-flash-lite',ffmpegPath:'ffmpeg',ffprobePath:'ffprobe'};
+Module._load=function(request,parent,isMain) {
+  if(request==='electron') return {app:{getPath:()=>dir}};
+  if(request==='../../ipc/settingsHandlers') return {settingsService:{get:()=>settings}};
+  return originalLoad.call(this,request,parent,isMain);
+};
+const exec=(...args)=>{const r=child.spawnSync('ffmpeg',['-hide_banner','-loglevel','error','-y',...args],{encoding:'utf8',timeout:60000});assert.equal(r.status,0,r.stderr);};
+const root=path.join(process.cwd(),'src/main');
+const {pickTracks}=require(path.join(root,'services/bulk/tracklistStore.ts'));
+const tracklistStore=require(path.join(root,'services/bulk/tracklistStore.ts'));
+const persistent=require(path.join(root,'services/persistentStore/index.ts'));
+const {prepareBulkRender}=require(path.join(root,'services/bulk/bulkPlanner.ts'));
+const {RenderOrchestrator}=require(path.join(root,'services/render/renderOrchestrator.ts'));
+const {validateProjectData}=require(path.join(root,'services/project/projectValidator.ts'));
+const {applyPreviewVisualUpdate}=require(path.join(process.cwd(),'src/shared/domain/previewTypes.ts'));
+const {buildComposedOutputCommand}=require(path.join(root,'services/render/renderCommandBuilder.ts'));
+(async()=>{
+  try {
+    const a=path.join(dir,'a.png'),b=path.join(dir,'b.png'),intro=path.join(dir,'intro.png'),overlay=path.join(dir,'overlay.png'),sticker=path.join(dir,'sticker.png'),one=path.join(dir,'one.mp3'),two=path.join(dir,'two.mp3');
+    for (const [file,color,size] of [[a,'blue','320x180'],[b,'green','320x180'],[intro,'purple','320x180'],[overlay,'red','80x60'],[sticker,'yellow','100x60']]) exec('-f','lavfi','-i',`color=c=${color}:s=${size}`,'-frames:v','1','-update','1',file);
+    exec('-f','lavfi','-i','sine=frequency=440:sample_rate=44100','-t','0.45','-c:a','libmp3lame',one);
+    exec('-f','lavfi','-i','sine=frequency=660:sample_rate=44100','-t','0.45','-c:a','libmp3lame',two);
+    const selected=pickTracks([one,two],4,()=>0);assert.equal(selected.filter((p)=>p===one).length,2);assert.equal(selected.filter((p)=>p===two).length,2);
+    tracklistStore.listTracklists=async()=>[{id:'folder',name:'Blues',path:dir,mp3Paths:[one,two]}];
+    persistent.listLockedAssets=async()=>[['intro',intro],['overlay',overlay],['stickerSubscribe',sticker]].map(([menu,p])=>({assetId:menu,menu,path:p}));
+    const request={media:[{id:'first',path:a,type:'image'},{id:'second',path:b,type:'image'}],tracklistId:'folder',mp3Count:3,options:{overlay:true,intro:true,fadeIn:true,fadeInSec:0.1,fadeOut:true,fadeOutSec:0.1,sticker:true}};
+    await assert.rejects(prepareBulkRender({...request,media:[request.media[0],{...request.media[1],type:'video'}]}),/tidak boleh mencampur/);
+    await assert.rejects(prepareBulkRender({...request,mp3Count:5}),/dua salinan/);
+    const plans=await prepareBulkRender(request);assert.equal(plans.length,2);
+    assert.notEqual(plans[0].project.projectId,plans[1].project.projectId);
+    for (const plan of plans) {assert.equal(validateProjectData(plan.project).valid,true); assert.equal(plan.tracks.length,3);assert.ok(Math.max(...[one,two].map((p)=>plan.tracks.filter((s)=>s===p).length))<=2);assert.equal(plan.project.settings.resolution,'720p');assert.equal(plan.project.settings.fps,24);assert.equal(plan.project.settings.bitrateMode,'vbr');assert.equal(plan.project.stickerSubscribe.config.schedule.mode,'timestamp');assert.ok(Number(plan.project.stickerSubscribe.config.schedule.timestamps[0])>=1);assert.equal(plan.project.intro.fadeInSec,0.1);}
+    const bokehPlans=await prepareBulkRender({...request,media:[request.media[0]],options:{...request.options,intro:false,fadeInStyle:'blur',fadeInBlur:15,fadeInBrightness:-0.35}});
+    assert.equal(bokehPlans[0].project.intro.fallbackStyle,'blur');assert.equal(bokehPlans[0].project.intro.fallbackBlur,15);
+    const introBokehPlans=await prepareBulkRender({...request,media:[request.media[0]],options:{...request.options,fadeInStyle:'blur',fadeInBlur:15,fadeInBrightness:-0.35}});
+    const introBokehCommand=buildComposedOutputCommand('ffmpeg',introBokehPlans[0].project,path.join(dir,'intro-bokeh.mp4'),1.5,3,null,false);
+    assert.match(introBokehCommand.args.join(' '),/bulk_intro_blurred/);
+    exec(...introBokehCommand.args);
+    assert.match(buildComposedOutputCommand('ffmpeg',bokehPlans[0].project,path.join(dir,'bulk-bokeh.mp4'),1.5,0,null,false).args.join(' '),/scene_lights/);
+    const combined=buildComposedOutputCommand('ffmpeg',plans[0].project,path.join(dir,'check.mp4'),1.5,3,null,false);
+    assert.match(combined.args.join(' '),/sticker_source_0_composite_0\]fade=t=out:st=.*\[final_fade_out\]/);
+    const withText={...plans[0].project,textOverlays:[{id:'text',locked:true,hiddenInPreview:true,config:{position:{x:2,y:3}}}]};
+    assert.equal(applyPreviewVisualUpdate(withText,{kind:'text',id:'text',position:{x:40,y:30}}).textOverlays[0].config.position.x,2);
+    assert.equal(JSON.parse(JSON.stringify(withText)).textOverlays[0].hiddenInPreview,true);
+    const renderer=new RenderOrchestrator('ffmpeg','ffprobe',path.join(dir,'jobs'));
+    const paths=[];
+    for (const plan of plans) { const result=await renderer.start(plan.project,()=>{});paths.push(result.outputPath); }
+    assert.equal(new Set(paths).size,2);
+    for (const video of paths) {assert.ok(fs.statSync(video).size>10000);const probe=child.spawnSync('ffprobe',['-v','error','-show_entries','stream=codec_type,r_frame_rate','-of','csv=p=0',video],{encoding:'utf8'});assert.match(probe.stdout,/24\/1/);assert.match(probe.stdout,/audio/);}
+    const pixel=child.spawnSync('ffmpeg',['-hide_banner','-loglevel','error','-ss','3','-i',paths[0],'-frames:v','1','-pix_fmt','rgb24','-f','rawvideo','pipe:1'],{maxBuffer:5e6});assert.equal(pixel.status,0,String(pixel.stderr));
+    const sample=(x,y)=>Array.from(pixel.stdout.subarray((y*1280+x)*3,(y*1280+x)*3+3));
+    const inside=sample(1080,615),outside=sample(980,615);
+    assert.ok(inside[0]>outside[0]+45 && inside[1]>outside[1]+45,`Sticker harus jelas pada output: ${inside}, background: ${outside}`);
+    const opening=child.spawnSync('ffmpeg',['-hide_banner','-loglevel','error','-ss','0.8','-i',paths[0],'-frames:v','1','-pix_fmt','rgb24','-f','rawvideo','pipe:1'],{maxBuffer:5e6});assert.equal(opening.status,0,String(opening.stderr));
+    const before=Array.from(opening.stdout.subarray((615*1280+1080)*3,(615*1280+1080)*3+3));
+    assert.ok(before[1]<inside[1]-40,`Sticker Bulk tidak boleh muncul di awal video: ${before}, kemudian ${inside}`);
+    const video=path.join(dir,'short.mp4');exec('-f','lavfi','-i','color=c=blue:s=320x180:r=24','-t','0.5','-c:v','libx264','-pix_fmt','yuv420p',video);
+    const animatedSticker=path.join(dir,'animated-sticker.mp4');exec('-f','lavfi','-i','color=c=yellow:s=100x60:r=24','-t','1.5','-c:v','libx264','-pix_fmt','yuv420p',animatedSticker);
+    persistent.listLockedAssets=async()=>[{assetId:'sticker-video',menu:'stickerSubscribe',path:animatedSticker}];
+    const autoSticker=await prepareBulkRender({...request,media:[request.media[0]],options:{...request.options,overlay:false,intro:false,stickerSchedule:{mode:'timestamp',iterativeCount:null,timestamps:['1']},stickerDurationSec:null}});
+    assert.ok(Math.abs(autoSticker[0].project.stickerSubscribe.config.durationSec-1.5)<.1);
+    const manualSticker=await prepareBulkRender({...request,media:[request.media[0]],options:{...request.options,overlay:false,intro:false,stickerSchedule:{mode:'timestamp',iterativeCount:null,timestamps:['1']},stickerDurationSec:2.5}});
+    assert.equal(manualSticker[0].project.stickerSubscribe.config.durationSec,2.5);
+    settings.bitrateMode='cbr';
+    const videoPlans=await prepareBulkRender({...request,media:[{id:'third',path:video,type:'video'}],mp3Count:1,options:{overlay:false,intro:false,fadeIn:false,fadeInSec:0,fadeOut:false,fadeOutSec:0,sticker:false}});
+    assert.equal(videoPlans[0].project.settings.bitrateMode,'cbr');
+    const final=await renderer.start(videoPlans[0].project,()=>{});assert.ok(fs.statSync(final.outputPath).size>10000);
+    console.log('V5N BULK: track limit, mixed-media rejection, 2 image exports and 1 video export with audio, options and sticker pixels: PASSED');
+  } finally {fs.rmSync(dir,{recursive:true,force:true});}
+})().catch((error)=>{console.error(error);process.exitCode=1;});

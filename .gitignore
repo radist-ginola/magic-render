@@ -1,0 +1,44 @@
+# Dependencies and generated build/test output
+node_modules/
+dist/
+.test-dist/
+release/
+coverage/
+*.log
+.DS_Store
+Thumbs.db
+
+# Local secrets and runtime-specific configuration
+.env
+.env.*
+!.env.example
+
+# Local editor/workspace data
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Historical implementation checkpoints and reports are kept in the separate
+# development-history archive, not in the current source repository.
+/BUILD_ERROR_FIX_REPORT.md
+/Magic-Render-Pro-V6I-Redesign-*.md
+/P[0-9]*.md
+/PHASE30_FIX_REPORT.md
+/REDESIGN_*.md
+/RTM.md
+/UPDATE*.md
+/UPDATE*.json
+/P16_*.json
+/V5*.md
+/V6*.md
+/app_excerpt.txt
+
+# App runtime/user data (never commit per-user state)
+recent-projects.json
+magic-render-pro-ai.json
+magic-render-pro-settings.json
+project-state/
+Asset Library/
+user-data/
+userData/

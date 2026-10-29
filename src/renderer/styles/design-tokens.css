@@ -1,0 +1,81 @@
+/*
+ * Magic Render Pro V6I — shared design tokens (P01)
+ * Palette and dimensions are centralized here so later redesign phases can
+ * adjust appearance without touching component state, project data or IPC.
+ */
+:root {
+  color-scheme: dark;
+
+  /* Brand / accent colors */
+  --mrp-color-bg: #07111f;
+  --mrp-color-surface: #0b1727;
+  --mrp-color-surface-raised: #102035;
+  --mrp-color-surface-elevated: #152942;
+  --mrp-color-surface-hover: #19324b;
+  --mrp-color-border: rgba(142, 171, 205, 0.16);
+  --mrp-color-border-strong: rgba(142, 171, 205, 0.29);
+  --mrp-color-text: #edf5ff;
+  --mrp-color-text-secondary: #9aadc4;
+  --mrp-color-text-muted: #71869f;
+  --mrp-color-cyan: #12d9ef;
+  --mrp-color-cyan-hover: #58e9f5;
+  --mrp-color-cyan-ink: #03131d;
+  --mrp-color-magenta: #df35d2;
+  --mrp-color-magenta-hover: #f14ce3;
+  --mrp-color-violet: #8970ff;
+  --mrp-color-success: #36d399;
+  --mrp-color-warning: #f6c260;
+  --mrp-color-danger: #fb647a;
+  --mrp-color-info: #70b8ff;
+
+  /* Type scale */
+  --mrp-font-sans: Inter, "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --mrp-font-mono: "Cascadia Code", Consolas, "SFMono-Regular", monospace;
+  --mrp-font-size-xs: 10px;
+  --mrp-font-size-sm: 11px;
+  --mrp-font-size-md: 12px;
+  --mrp-font-size-lg: 14px;
+  --mrp-font-size-xl: 18px;
+
+  /* Spacing scale: multiples of 4px */
+  --mrp-space-1: 4px;
+  --mrp-space-2: 8px;
+  --mrp-space-3: 12px;
+  --mrp-space-4: 16px;
+  --mrp-space-5: 20px;
+  --mrp-space-6: 24px;
+  --mrp-space-8: 32px;
+
+  /* Shape, focus, and shadows */
+  --mrp-radius-sm: 6px;
+  --mrp-radius-md: 8px;
+  --mrp-radius-lg: 12px;
+  --mrp-radius-xl: 16px;
+  --mrp-radius-pill: 999px;
+  --mrp-focus-ring: 0 0 0 2px rgba(7, 17, 31, 0.98), 0 0 0 4px rgba(18, 217, 239, 0.78);
+  --mrp-shadow-card: 0 12px 32px rgba(0, 0, 0, 0.22);
+  --mrp-shadow-overlay: 0 24px 70px rgba(0, 0, 0, 0.48);
+  --mrp-motion-fast: 120ms ease;
+  --mrp-motion-normal: 160ms ease;
+
+  /* Form controls */
+  --mrp-control-bg: #0c1a2b;
+  --mrp-control-bg-hover: #10243a;
+  --mrp-control-border: rgba(142, 171, 205, 0.24);
+  --mrp-control-border-focus: var(--mrp-color-cyan);
+  --mrp-control-text: var(--mrp-color-text);
+  --mrp-control-placeholder: #71869f;
+  --mrp-control-height: 34px;
+
+  /* Legacy aliases preserved for existing renderer styles. */
+  --bg: var(--mrp-color-bg);
+  --panel: var(--mrp-color-surface);
+  --panel-2: var(--mrp-color-surface-raised);
+  --line: var(--mrp-color-border);
+  --text: var(--mrp-color-text);
+  --muted: var(--mrp-color-text-secondary);
+  --cyan: var(--mrp-color-cyan);
+  --violet: var(--mrp-color-violet);
+  --fuchsia: var(--mrp-color-magenta);
+  --danger: var(--mrp-color-danger);
+}

@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "outDir": ".test-dist",
+    "rootDir": "src",
+    "declaration": false,
+    "sourceMap": false,
+    "noEmitOnError": true
+  },
+  "include": [
+    "src/main/services/audio/playlistAlgorithms.ts",
+    "src/shared/domain/playlistTypes.ts"
+  ]
+}
