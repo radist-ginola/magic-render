@@ -1,6 +1,6 @@
 # Magic Render Pro
 
-**Source version:** `0.3.27`  
+**Source version:** `0.3.30`  
 **Platform:** Windows x64 desktop application built with Electron, React, Vite, and TypeScript.
 
 Magic Render Pro creates music/video compositions with a main-media canvas, intro and overlay layers, particles, audio visualizers, text and subscribe stickers, playlists, bulk rendering, and YouTube SEO metadata. Video rendering and SEO frame analysis use FFmpeg/FFprobe. Optional AI-assisted features require the selected provider's credentials and network access.
@@ -47,16 +47,16 @@ Generated output (`dist/`, `.test-dist/`, and `release/`) is intentionally exclu
 
 ## GitHub Releases and in-app updates
 
-GitHub Releases is the intended distribution channel. **Automatic in-app updating is not enabled in source version `0.3.27` yet**; adding a Release or uploading a new installer alone will not update already-installed copies. See [`docs/GITHUB_RELEASES_PREPARATION.md`](docs/GITHUB_RELEASES_PREPARATION.md) for the rollout checklist. Once the updater is implemented, publish the generated installer and updater metadata together, and test upgrading from the previous installed version before announcing a release.
+GitHub Releases is the intended distribution channel. **Automatic in-app installation is not enabled in source version `0.3.30` yet**; adding a Release or uploading a new installer alone will not update already-installed copies. See [`docs/GITHUB_RELEASES_PREPARATION.md`](docs/GITHUB_RELEASES_PREPARATION.md) for the rollout checklist. Once the updater is implemented, publish the generated installer and updater metadata together, and test upgrading from the previous installed version before announcing a release.
 
 ## Licensing
 
 No repository-wide `LICENSE` file is included in this source baseline. Choose and add the appropriate license before making the source repository public. Review the licenses for bundled dependencies and FFmpeg separately.
 
 
-## GitHub Releases update check (v0.3.27)
+## GitHub Releases update check (v0.3.30)
 
-The checker is configured for [`radist-ginola/magic-render`](https://github.com/radist-ginola/magic-render). Help → Periksa Versi checks the latest stable release through the anonymous GitHub API and opens the validated installer/release URL for download. The repository currently has no published Releases, so the checker will report that an initial stable Release must be published until `v0.3.27` and its Windows installer are released. Existing installations built before the repository was configured must install this configured build manually once. This feature downloads through the system browser; it does not silently install updates. Do not add a GitHub token to source code or the packaged app.
+The checker is configured for [`radist-ginola/magic-render`](https://github.com/radist-ginola/magic-render). Help → Periksa Versi checks the latest stable release through the anonymous GitHub API and opens the validated installer/release URL for download. The Help → Periksa Versi checker reads the latest stable GitHub Release and opens its installer/release page. The installer is still run manually; background download, installation, and renderer-only updates are not enabled yet. Existing installations built before the repository was configured must install this configured build manually once. This feature downloads through the system browser; it does not silently install updates. Do not add a GitHub token to source code or the packaged app.
 
 ## Local user data and privacy
 

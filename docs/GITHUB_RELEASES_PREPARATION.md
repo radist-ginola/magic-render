@@ -1,6 +1,6 @@
 # GitHub Releases preparation
 
-Current source version: `0.3.27`.
+Current source version: `0.3.30`.
 
 ## Update repository configuration
 
@@ -14,7 +14,7 @@ This initial release checker does **not** silently install or restart the app. E
 2. Choose and add a `LICENSE` before making source public. Review third-party assets and FFmpeg/FFprobe licensing.
 3. Run `npm ci`, `npm run build`, `npm test`, and `npm run dist` on Windows x64.
 4. Install the generated installer in a clean Windows VM and check rendering, SEO keyframes, preview, and update checking.
-5. The repository currently has no published Releases. For the first release, tag the version represented by `package.json` (currently `v0.3.27`), attach the NSIS `.exe`, and publish as a stable (non-draft, non-prerelease) GitHub Release.
+5. The repository currently has no published Releases. For the first release, tag the version represented by `package.json` (currently `v0.3.30`), attach the NSIS `.exe`, and publish as a stable (non-draft, non-prerelease) GitHub Release.
 6. Do not publish a GitHub write token in source or inside the installed app. Use CI secrets only for publishing.
 
 ## User data handling
