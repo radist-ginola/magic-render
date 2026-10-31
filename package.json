@@ -1,6 +1,6 @@
 {
   "name": "magic-render-pro",
-  "version": "0.3.27",
+  "version": "0.3.30",
   "description": "Magic Render Pro — Windows desktop video rendering workstation.",
   "private": true,
   "main": "dist/main/index.js",
